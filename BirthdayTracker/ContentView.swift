@@ -26,7 +26,7 @@ struct ContentView: View {
     var body: some View {
         NavigationStack {
             List {
-                ForEach(birthdays) { birthday in
+                ForEach(sortedBirthdays) { birthday in
                     Button {
                         // Set the selected birthday to edit
                         birthdayToEdit = birthday
@@ -57,10 +57,12 @@ struct ContentView: View {
                         }
                     }
                 }
+                .onDelete(perform: deleteBirthdays)
             }
             .navigationTitle("Birthdays")
             .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
+                ToolbarItemGroup(placement: .navigationBarTrailing) {
+                    EditButton()
                     Button {
                         showingAddView = true
                     } label: {
@@ -79,6 +81,44 @@ struct ContentView: View {
             }
             .scrollContentBackground(isDarkThemeEnabled ? .hidden : .automatic)
             .background(isDarkThemeEnabled ? Color(red: 0.18, green: 0.20, blue: 0.22) : Color(UIColor.systemGroupedBackground))
+        }
+    }
+    
+    private var sortedBirthdays: [Birthday] {
+        let order = settingsArray.first?.sortOrder ?? .upcoming
+        
+        return birthdays.sorted { b1, b2 in
+            switch order {
+            case .alphabetical:
+                return b1.name.localizedCaseInsensitiveCompare(b2.name) == .orderedAscending
+            case .dateAdded:
+                return b1.dateAdded < b2.dateAdded
+            case .upcoming:
+                return daysUntil(b1.date) < daysUntil(b2.date)
+            }
+        }
+    }
+    
+    private func daysUntil(_ date: Date) -> Int {
+        let calendar = Calendar.current
+        let now = Date()
+        
+        var dateComponents = calendar.dateComponents([.month, .day], from: date)
+        dateComponents.year = calendar.component(.year, from: now)
+        
+        var nextBirthday = calendar.date(from: dateComponents) ?? now
+        if nextBirthday < calendar.startOfDay(for: now) {
+            dateComponents.year! += 1
+            nextBirthday = calendar.date(from: dateComponents) ?? now
+        }
+        
+        let days = calendar.dateComponents([.day], from: calendar.startOfDay(for: now), to: calendar.startOfDay(for: nextBirthday)).day ?? 0
+        return days
+    }
+
+    private func deleteBirthdays(offsets: IndexSet) {
+        for index in offsets {
+            deleteBirthday(sortedBirthdays[index])
         }
     }
     

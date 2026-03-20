@@ -24,6 +24,7 @@ struct AddBirthdayView: View {
             Form {
                 Section(header: Text("Details")) {
                     TextField("Name", text: $name)
+                        .autocorrectionDisabled(true)
                     DatePicker("Birthday", selection: $date, displayedComponents: [.date])
                     Toggle("Important Birthday", isOn: $isImportant)
                 }

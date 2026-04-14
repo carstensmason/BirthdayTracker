@@ -22,6 +22,11 @@ struct MainTabView: View {
                     Label("Home", systemImage: "house.fill")
                 }
             
+            GiftsView()
+                .tabItem {
+                    Label("Gifts", systemImage: "gift.fill")
+                }
+            
             SettingsView()
                 .tabItem {
                     Label("Settings", systemImage: "gearshape.fill")

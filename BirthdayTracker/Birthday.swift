@@ -18,6 +18,9 @@ final class Birthday {
     var isImportant: Bool = false
     var dateAdded: Date = Date()
     
+    @Relationship(deleteRule: .cascade, inverse: \GiftItem.birthday)
+    var gifts: [GiftItem]? = []
+    
     init(id: UUID = UUID(), name: String = "", date: Date = Date(), isImportant: Bool = false, dateAdded: Date = Date()) {
         self.id = id
         self.name = name

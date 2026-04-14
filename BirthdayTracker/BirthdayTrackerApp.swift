@@ -13,7 +13,8 @@ struct BirthdayTrackerApp: App {
     var sharedModelContainer: ModelContainer = {
         let schema = Schema([
             Birthday.self,
-            AppSettings.self
+            AppSettings.self,
+            GiftItem.self
         ])
         let modelConfiguration = ModelConfiguration(schema: schema, isStoredInMemoryOnly: false)
 
